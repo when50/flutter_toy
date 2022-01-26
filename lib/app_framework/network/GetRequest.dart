@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart' as Dio;
+import 'package:dio/dio.dart';
 import 'package:dio/adapter.dart';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
@@ -7,10 +7,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
 
-typedef Response = Dio.Response;
-
 class GetRequest {
-  Future<Response> fetch() async {
+  
+  Future<T> fetch<T>() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     String appName = packageInfo.appName;
@@ -24,7 +23,7 @@ class GetRequest {
     List<int> pubCert = data.buffer.asInt8List();
     data = await rootBundle.load('assets/files/your-private-key.pem');
     List<int> privKey = data.buffer.asInt8List();
-    var dio = Dio.Dio();
+    var dio = Dio();
     dio.options.headers = {
       "appid": "102",
       "version": "${version}",
@@ -73,6 +72,7 @@ class GetRequest {
     url = url.replaceAll(new RegExp(r"sig[^&]*"), "sig=$digest");
     print(parameter);
     print(url);
-    return dio.get(url);
+    Response<T> r1 = await dio.get(url);
+    return r1.data!;
   }
 }
